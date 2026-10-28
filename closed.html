@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eloàme Candy Shop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Lora:ital@1&display=swap">
+<style>
+  /* Layout: a single storefront scaled by container width, sign on top, awning, door + window, fence below. Committed dark look. */
+  :root {
+    --ground: #151813;
+    --facade: #212619;
+    --moss: #66724a;
+    --moss-line: #4a5436;
+    --cream: #f3eed2;
+    --mint: #e4eed0;
+    --awning-red: #722a2f;
+    --awning-cream: #d6c8a8;
+    --plum: #5a1b24;
+    --gold: #e8c06a;
+    --glass: #0f120d;
+    --script: "Dancing Script", "Brush Script MT", cursive;
+    --serif: "Lora", Georgia, serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground);
+    color: var(--cream);
+    padding-block: 2rem;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    min-height: 100vh;
+  }
+  main { max-width: 760px; margin: 0 auto; }
+  .shop {
+    container-type: inline-size;
+    position: relative;
+  }
+  .building {
+    background: var(--facade);
+    border: 0.3cqw solid var(--moss-line);
+    border-bottom: 0;
+    border-radius: 4cqw 4cqw 0 0;
+    overflow: hidden;
+  }
+  .sign {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 6cqw 0 5cqw;
+  }
+  .clover { width: 1em; height: 1em; display: inline-block; flex: none; }
+  .sign .clover { font-size: 4cqw; color: var(--mint); }
+  h1 {
+    margin: 0; font-family: var(--script); font-weight: 700;
+    font-size: 17cqw; line-height: 1.1; color: var(--mint);
+  }
+  .plaque {
+    margin-top: 1.2cqw;
+    background: var(--plum);
+    border: 0.5cqw solid #3d1218;
+    border-radius: 2cqw;
+    padding: 0.7cqw;
+    box-shadow: 0 0 0 0.2cqw #3d1218;
+  }
+  .plaque-inner {
+    border: 0.35cqw solid var(--cream);
+    border-radius: 1.4cqw;
+    padding: 1.6cqw 7cqw;
+    display: flex; align-items: center; gap: 3cqw;
+    font-family: var(--script); font-weight: 500;
+    font-size: 6.6cqw; line-height: 1.2; color: #f6dfae;
+  }
+  .plaque .clover { font-size: 3.4cqw; color: #f6dfae; }
+  .cornice { height: 2cqw; background: var(--moss); }
+  .awning { display: flex; margin: 0 -1.2cqw; position: relative; z-index: 2; filter: drop-shadow(0 0.8cqw 0.6cqw rgba(0,0,0,.45)); }
+  .awning i { flex: 1; height: 8.2cqw; border-radius: 0 0 50% 50% / 0 0 100% 100%; }
+  .awning i:nth-child(odd) { background: var(--awning-red); }
+  .awning i:nth-child(even) { background: var(--awning-cream); }
+  .front {
+    display: grid; grid-template-columns: 31fr 59fr; gap: 2.2cqw;
+    padding: 10.8cqw 2cqw 2cqw;
+  }
+  .door {
+    all: unset; display: block; cursor: pointer;
+    background: var(--moss); padding: 2.5cqw; border-radius: 0.6cqw;
+    min-width: 0;
+  }
+  .door:focus-visible { outline: 0.6cqw solid var(--gold); outline-offset: 0.6cqw; }
+  .door-glass {
+    position: relative; overflow: hidden; background: var(--glass);
+    height: 28cqw; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.2cqw;
+    text-align: center;
+  }
+  .glare {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(115deg, transparent 22%, rgba(255,255,255,.06) 22%, rgba(255,255,255,.06) 48%, transparent 48%);
+  }
+  .door-word { font-family: var(--script); font-weight: 500; font-size: 7.6cqw; line-height: 1; color: var(--cream); position: relative; }
+  .door-glass .clover { font-size: 2.8cqw; color: var(--cream); position: relative; }
+  .pill {
+    position: relative; font-family: var(--script); font-weight: 500; font-size: 3.6cqw; color: #2a1511;
+    background: var(--cream); border-radius: 99cqw; padding: 0.9cqw 3.4cqw;
+  }
+  .knob { position: absolute; right: 2.6cqw; bottom: 2.4cqw; width: 2cqw; height: 2cqw; border-radius: 50%; background: var(--gold); }
+  .door-panel {
+    height: 13cqw; background: var(--moss); border: 0.35cqw solid var(--moss-line);
+    margin-top: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .door-panel span { width: 56%; height: 2cqw; background: var(--plum); border-radius: 0.4cqw; }
+  .door.knock { animation: knock .45s ease; }
+  @keyframes knock { 20% { transform: translateX(-0.6cqw); } 40% { transform: translateX(0.6cqw); } 60% { transform: translateX(-0.4cqw); } 80% { transform: translateX(0.3cqw); } }
+  .window { background: var(--moss); padding: 1.8cqw; min-width: 0; }
+  .window-glass {
+    position: relative; overflow: hidden; background: var(--glass);
+    height: 100%; min-height: 41cqw;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    padding: 4cqw 7cqw;
+  }
+  .window-glass .glare {
+    background: linear-gradient(115deg, transparent 25%, rgba(255,255,255,.05) 25%, rgba(255,255,255,.05) 55%, transparent 55%);
+  }
+  .window-glass p {
+    position: relative; margin: 0; font-family: var(--script); font-weight: 700;
+    font-size: 8.4cqw; line-height: 1.12; color: var(--cream); text-wrap: balance;
+  }
+  .spark { position: absolute; width: 4.4cqw; height: 4.4cqw; color: #bdb597; }
+  .spark.a { left: 5cqw; bottom: 8cqw; }
+  .spark.b { right: 5cqw; top: 12cqw; width: 3.6cqw; height: 3.6cqw; }
+  .sill { height: 2.2cqw; background: var(--moss); margin: 0 -1.2cqw; border-radius: 0.5cqw; position: relative; }
+  .fence {
+    height: 7cqw;
+    border-top: 0.3cqw solid var(--moss-line);
+    margin-top: 1.2cqw;
+    background: repeating-linear-gradient(90deg, transparent 0, transparent calc(10% - 0.3cqw), var(--moss-line) calc(10% - 0.3cqw), var(--moss-line) 10%);
+    background-size: 100% 85%; background-repeat: no-repeat;
+    transform: translateX(-0.1%);
+  }
+  footer {
+    margin-top: 6rem; text-align: center; font-family: var(--serif); font-style: italic;
+    color: var(--moss); display: flex; justify-content: center; align-items: center; gap: .6em;
+    font-size: clamp(14px, 2.2vw, 17px);
+  }
+  footer .clover { font-size: 1.1em; }
+  /* Pop-up */
+  .scrim {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(8, 10, 6, .72);
+    display: flex; align-items: center; justify-content: center;
+    padding-block: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .modal {
+    width: min(100%, 420px); text-align: center;
+    background: var(--plum); border: 3px solid #3d1218; border-radius: 22px; padding: 6px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.6);
+    animation: pop .28s ease-out;
+  }
+  .modal-inner { border: 2px solid var(--cream); border-radius: 17px; padding: 30px 24px 26px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .modal .clover { font-size: 30px; color: #f6dfae; }
+  .modal h2 { margin: 0; font-family: var(--script); font-weight: 700; font-size: clamp(32px, 9vw, 44px); line-height: 1.1; color: #f6dfae; text-wrap: balance; }
+  .modal button {
+    font: inherit; font-family: var(--script); font-weight: 700; font-size: 22px;
+    background: var(--cream); color: #2a1511; border: 0; border-radius: 99px; padding: 8px 34px; cursor: pointer;
+  }
+  .modal button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  @keyframes pop { from { opacity: 0; transform: scale(.92) translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .door.knock, .modal { animation: none; } }
+</style>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="clover" viewBox="0 0 24 24"><circle cx="8.2" cy="8.2" r="5.4" fill="currentColor"/><circle cx="15.8" cy="8.2" r="5.4" fill="currentColor"/><circle cx="8.2" cy="15.8" r="5.4" fill="currentColor"/><circle cx="15.8" cy="15.8" r="5.4" fill="currentColor"/></symbol>
+  <symbol id="spark" viewBox="0 0 24 24"><path d="M12 0 C12.8 7 17 11.2 24 12 C17 12.8 12.8 17 12 24 C11.2 17 7 12.8 0 12 C7 11.2 11.2 7 12 0Z" fill="currentColor"/></symbol>
+</svg>
+
+<main>
+  <div class="shop">
+    <div class="building">
+      <div class="sign">
+        <svg class="clover" aria-hidden="true"><use href="#clover"/></svg>
+        <h1>eloàme</h1>
+        <div class="plaque"><div class="plaque-inner">
+          <span>candy</span>
+          <svg class="clover" aria-hidden="true"><use href="#clover"/></svg>
+          <span>shop</span>
+        </div></div>
+      </div>
+      <div class="cornice"></div>
+    </div>
+    <div class="awning" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="building" style="border-radius:0; margin-top:-8.2cqw; padding-top:0;">
+      <div class="front">
+        <button class="door" id="door" type="button" aria-haspopup="dialog" aria-label="Shop door, closed. Tap to enter.">
+          <div class="door-glass">
+            <div class="glare"></div>
+            <span class="door-word">Closed</span>
+            <svg class="clover" aria-hidden="true"><use href="#clover"/></svg>
+            <span class="pill">Tap to enter</span>
+            <span class="knob"></span>
+          </div>
+          <div class="door-panel"><span></span></div>
+        </button>
+        <div class="window">
+          <div class="window-glass">
+            <div class="glare"></div>
+            <svg class="spark a" aria-hidden="true"><use href="#spark"/></svg>
+            <svg class="spark b" aria-hidden="true"><use href="#spark"/></svg>
+            <p>New menu coming soon</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sill"></div>
+    <div class="fence" aria-hidden="true"></div>
+  </div>
+  <footer>
+    <svg class="clover" aria-hidden="true"><use href="#clover"/></svg>
+    <span>eloàme candyshop, jewellery made sweet</span>
+  </footer>
+</main>
+
+<div class="scrim" id="scrim" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-inner">
+      <svg class="clover" aria-hidden="true"><use href="#clover"/></svg>
+      <h2 id="modal-title">Closed! Come back on the 31st!</h2>
+      <button type="button" id="close">Okay</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var door = document.getElementById('door');
+    var scrim = document.getElementById('scrim');
+    var closeBtn = document.getElementById('close');
+    function open() {
+      door.classList.remove('knock');
+      void door.offsetWidth;
+      door.classList.add('knock');
+      scrim.hidden = false;
+      closeBtn.focus();
+    }
+    function close() {
+      scrim.hidden = true;
+      door.focus();
+    }
+    door.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    scrim.addEventListener('click', function (e) { if (e.target === scrim) close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !scrim.hidden) close(); });
+  })();
+</script>
+
+</body>
+</html>
